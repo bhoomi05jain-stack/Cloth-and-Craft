@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: closet-craft-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password123
+      POSTGRES_DB: closet_craft
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  # Python ML Service (CLIP & Outfit Ranking Engine)
+  ml-service:
+    build:
+      context: ./ml-service
+      dockerfile: Dockerfile
+    container_name: closet-craft-ml
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+    restart: unless-stopped
+
+  # Node.js Express Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: closet-craft-api
+    ports:
+      - "4000:4000"
+    environment:
+      - PORT=4000
+      - DATABASE_URL=postgresql://postgres:password123@postgres:5432/closet_craft?schema=public
+      - ML_SERVICE_URL=http://ml-service:8000
+      - JWT_SECRET=closet-craft-super-secret-key-2026
+      - FRONTEND_URL=http://localhost:3000
+    depends_on:
+      - postgres
+      - ml-service
+    restart: unless-stopped
+
+volumes:
+  pgdata:

@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  background: #efece6;
+  color: #242424;
+}
+
+.phone-frame {
+  width: 100%;
+  max-width: 430px;
+  height: min(890px, calc(100vh - 24px));
+  background: #f7f5f0;
+  border-radius: 46px;
+  position: relative;
+  box-shadow: 0 0 0 10px #181615, 0 0 0 12px #3e3835, 0 30px 70px -15px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}

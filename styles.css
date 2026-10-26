@@ -1,0 +1,305 @@
+/* Closet Craft - Luxury Fashion & Minimalist Editorial UI */
+@import url('https://fonts.googleapis.com/css2?family=Italiana&family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,500;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+  --font-serif: 'Italiana', 'Playfair Display', Georgia, serif;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: 'Outfit', sans-serif;
+  --primary-charcoal: #1C1917;
+  --warm-canvas: #FAF8F5;
+  --card-surface: #FFFFFF;
+  --flatlay-bg: #F6F4F1;
+  --border-subtle: #EBE5DF;
+  --accent-pink: #FB7185;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #EFECE6;
+  color: #1C1917;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  user-select: none;
+}
+
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(28, 25, 23, 0.2);
+  border-radius: 9999px;
+}
+
+/* Smartphone Shell Simulator (iPhone 15 Pro Aesthetic) */
+.phone-frame {
+  width: 100%;
+  max-width: 430px;
+  height: 890px;
+  max-height: calc(100vh - 24px);
+  background: #FAF8F5;
+  border-radius: 46px;
+  position: relative;
+  box-shadow: 
+    0 0 0 10px #181615,
+    0 0 0 12px #3E3835,
+    0 30px 70px -15px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.phone-frame.fullscreen-mode {
+  max-width: 100%;
+  height: 100vh;
+  max-height: 100vh;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* Minimalist Editorial Floating Bottom Nav with Center Elevating Notch */
+.floating-dock {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(235, 229, 223, 0.85);
+  border-radius: 32px;
+  box-shadow: 0 10px 30px -8px rgba(0, 0, 0, 0.12);
+  position: relative;
+}
+
+.center-fab-btn {
+  width: 48px;
+  height: 48px;
+  background: #1C1917;
+  color: #FFFFFF;
+  border-radius: 9999px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: -24px;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease;
+  border: 3px solid #FAF8F5;
+}
+.center-fab-btn:active {
+  transform: scale(0.92);
+}
+
+/* Segmented Control Pill (Items vs Outfits, Mes vs Semana) */
+.segmented-control {
+  background: #ECE8E1;
+  border-radius: 9999px;
+  padding: 3px;
+  display: flex;
+  position: relative;
+}
+
+.segmented-btn {
+  flex: 1;
+  padding: 6px 14px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 9999px;
+  transition: all 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+  color: #78716C;
+  text-align: center;
+}
+
+.segmented-btn.active {
+  background: #1C1917;
+  color: #FFFFFF;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Flat-Lay Collage Card */
+.flatlay-card {
+  background: var(--flatlay-bg);
+  border-radius: 24px;
+  border: 1px solid #ECE7E1;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+}
+.flatlay-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+}
+
+/* Flat-Lay Composition Internal Canvas */
+.flatlay-canvas {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1.15;
+  background: #F6F4F1;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.flatlay-piece {
+  position: absolute;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.09));
+  transition: transform 0.3s ease;
+}
+
+/* 3D Wardrobe Doors */
+.closet-3d-scene {
+  perspective: 1200px;
+  perspective-origin: center center;
+}
+
+.closet-wardrobe {
+  position: relative;
+  width: 280px;
+  height: 380px;
+  transform-style: preserve-3d;
+  transition: transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.closet-door {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(135deg, #FBF8F5 0%, #EFE9E2 100%);
+  border: 3px solid #D6CBC1;
+  box-shadow: inset 0 0 15px rgba(0,0,0,0.05), 0 10px 25px rgba(0,0,0,0.12);
+  transition: transform 1.4s cubic-bezier(0.25, 1, 0.5, 1);
+  transform-style: preserve-3d;
+  overflow: hidden;
+  z-index: 10;
+}
+
+.closet-door-left {
+  left: 0;
+  border-radius: 20px 0 0 20px;
+  transform-origin: left center;
+  border-right: 1px solid #B8AAA0;
+}
+
+.closet-door-right {
+  right: 0;
+  border-radius: 0 20px 20px 0;
+  transform-origin: right center;
+  border-left: 1px solid #B8AAA0;
+}
+
+.closet-wardrobe.doors-open .closet-door-left {
+  transform: rotateY(-125deg);
+}
+
+.closet-wardrobe.doors-open .closet-door-right {
+  transform: rotateY(125deg);
+}
+
+.closet-wardrobe.doors-open {
+  transform: scale(1.18) translateZ(50px);
+}
+
+.closet-interior-back {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, #FFFFFF 0%, #F5F1EB 100%);
+  border: 3px solid #D6CBC1;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+/* Animations */
+@keyframes sheetUp {
+  from { transform: translateY(100%); opacity: 0.6; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.animate-sheet-up {
+  animation: sheetUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes toastIn {
+  from { transform: translate(-50%, -20px) scale(0.9); opacity: 0; }
+  to { transform: translate(-50%, 0) scale(1); opacity: 1; }
+}
+
+.animate-toast-in {
+  animation: toastIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes sparkleFloat {
+  0% { transform: translateY(0) scale(0.8) rotate(0deg); opacity: 0; }
+  50% { opacity: 1; transform: translateY(-18px) scale(1.15) rotate(180deg); }
+  100% { transform: translateY(-40px) scale(0.6) rotate(360deg); opacity: 0; }
+}
+
+.animate-sparkle-float {
+  animation: sparkleFloat 3s infinite ease-in-out;
+}
+
+@keyframes scanLaser {
+  0% { top: 0%; opacity: 0.8; }
+  50% { opacity: 1; }
+  100% { top: 96%; opacity: 0.8; }
+}
+
+.animate-scan-laser {
+  animation: scanLaser 2s infinite ease-in-out alternate;
+}
+
+/* Button micro-interaction */
+.btn-press {
+  transition: transform 0.12s ease, filter 0.12s ease;
+}
+.btn-press:active {
+  transform: scale(0.96);
+  filter: brightness(0.96);
+}
+
+/* Calendar Flat-Lay Day Cell */
+.cal-day-cell {
+  min-height: 72px;
+  border-radius: 12px;
+  background: #FFFFFF;
+  border: 1px solid #ECE7E1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 4px 2px;
+  position: relative;
+  transition: all 0.2s ease;
+}
+.cal-day-cell:hover {
+  border-color: #1C1917;
+}
+
+.cal-day-cell.active-day {
+  background: #FAF8F5;
+  border-color: #1C1917;
+  box-shadow: 0 0 0 1.5px #1C1917;
+}

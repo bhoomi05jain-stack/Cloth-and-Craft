@@ -1,0 +1,19 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// SQLite development mirror. Scalar lists are stored as JSON strings.
+// Use: DATABASE_URL="file:./dev.db" npx prisma generate --schema prisma/schema.sqlite.prisma
+model User {
+  id           String  @id
+  email        String  @unique
+  passwordHash String
+  name         String
+  role         String  @default("USER")
+  isVerified   Boolean @default(false)
+}

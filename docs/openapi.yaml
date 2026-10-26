@@ -1,0 +1,22 @@
+openapi: 3.0.3
+info:
+  title: Closet Craft API
+  version: 2.0.0
+servers:
+  - url: http://localhost:4000
+paths:
+  /api/health:
+    get:
+      summary: Health
+  /api/auth/register:
+    post:
+      summary: Register
+  /api/outfits/generate:
+    post:
+      summary: Generate outfits from mood, occasion, and laundry-safe wardrobe
+  /api/daily-outfit:
+    get:
+      summary: Daily inspiration
+  /api/planner:
+    get:
+      summary: Calendar events with laundry conflict flags

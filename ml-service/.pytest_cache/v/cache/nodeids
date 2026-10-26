@@ -1,0 +1,8 @@
+[
+  "tests/test_recommendation.py::test_engine_empty_wardrobe_returns_graceful_message",
+  "tests/test_recommendation.py::test_engine_filters_washing_drying_damaged",
+  "tests/test_recommendation.py::test_engine_hard_constraints_filters_laundry",
+  "tests/test_recommendation.py::test_engine_incomplete_structure_is_empty",
+  "tests/test_recommendation.py::test_engine_novelty_downranks_history",
+  "tests/test_recommendation.py::test_engine_weights_and_breakdown"
+]

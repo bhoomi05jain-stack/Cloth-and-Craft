@@ -1,0 +1,328 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum LaundryStatus {
+  CLEAN
+  WORN
+  IN_LAUNDRY
+  WASHING
+  DRYING
+  READY_TO_WEAR
+  DAMAGED
+}
+
+enum SlotType {
+  TOP
+  BOTTOM
+  DRESS
+  OUTERWEAR
+  SHOE
+  BAG
+  ACCESSORY
+}
+
+model User {
+  id                    String                 @id @default(uuid())
+  email                 String                 @unique
+  passwordHash          String
+  name                  String
+  role                  Role                   @default(USER)
+  isVerified            Boolean                @default(false)
+  avatarEmoji           String?                @default("🧚‍♀️")
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+
+  preferences           UserPreference?
+  garments              Garment[]
+  accessories           Accessory[]
+  outfits               Outfit[]
+  favorites             OutfitFavorite[]
+  feedback              OutfitFeedback[]
+  recommendationHistory RecommendationHistory[]
+  dailyRecommendations  DailyRecommendation[]
+  plannedEvents         PlannedEvent[]
+  passwordResetTokens   PasswordResetToken[]
+  emailTokens           EmailVerificationToken[]
+
+  @@map("users")
+}
+
+model UserPreference {
+  id                    String                 @id @default(uuid())
+  userId                String                 @unique
+  user                  User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  favoriteColors        String[]               @default([])
+  colorsToAvoid         String[]               @default([])
+  preferredStyles       String[]               @default([])
+  preferredCategories   String[]               @default([])
+  comfortLevel          String?                @default("Regular")
+  preferredFootwear     String[]               @default([])
+  preferredAccessories  String[]               @default([])
+  typicalOccasions      String[]               @default([])
+  weatherPreferences    String[]               @default([])
+  sizes                 Json?
+  genderNeutral         Boolean                @default(false)
+  climateZone           String?                @default("Temperate")
+  updatedAt             DateTime               @updatedAt
+
+  @@map("user_preferences")
+}
+
+model Garment {
+  id                    String                 @id @default(uuid())
+  ownerId               String
+  owner                 User                   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  name                  String
+  category              String
+  subcategory           String?
+  primaryColor          String
+  colorHex              String?                @default("#FFFFFF")
+  pattern               String?                @default("Solid")
+  material              String?
+  season                String[]               @default([])
+  styleTags             String[]               @default([])
+  occasionTags          String[]               @default([])
+  laundryStatus         LaundryStatus          @default(CLEAN)
+  wearCount             Int                    @default(0)
+  lastWornAt            DateTime?
+  daysInLaundry         Int                    @default(0)
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+
+  images                GarmentImage[]
+  statusHistory         GarmentStatusHistory[]
+  outfitItems           OutfitItem[]
+
+  @@index([ownerId])
+  @@index([laundryStatus])
+  @@index([category])
+  @@map("garments")
+}
+
+model GarmentImage {
+  id                    String                 @id @default(uuid())
+  garmentId             String
+  garment               Garment                @relation(fields: [garmentId], references: [id], onDelete: Cascade)
+  originalUrl           String
+  isolatedUrl           String?
+  mimeType              String                 @default("image/jpeg")
+  sizeBytes             Int?
+  checksum              String?
+  isPrimary             Boolean                @default(true)
+  createdAt             DateTime               @default(now())
+
+  @@index([garmentId])
+  @@map("garment_images")
+}
+
+model GarmentStatusHistory {
+  id                    String                 @id @default(uuid())
+  garmentId             String
+  garment               Garment                @relation(fields: [garmentId], references: [id], onDelete: Cascade)
+  previousStatus        LaundryStatus
+  newStatus             LaundryStatus
+  changedAt             DateTime               @default(now())
+  reason                String?
+
+  @@index([garmentId])
+  @@map("garment_status_history")
+}
+
+model Accessory {
+  id                    String                 @id @default(uuid())
+  ownerId               String
+  owner                 User                   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  name                  String
+  category              String
+  primaryColor          String
+  material              String?
+  styleTags             String[]               @default([])
+  isOwned               Boolean                @default(true)
+  status                LaundryStatus          @default(CLEAN)
+  imageUrl              String?
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+
+  outfitAccessories     OutfitAccessory[]
+
+  @@index([ownerId])
+  @@map("accessories")
+}
+
+model Outfit {
+  id                    String                 @id @default(uuid())
+  ownerId               String
+  owner                 User                   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  name                  String
+  occasion              String
+  mood                  String?
+  weather               String?
+  formality             String?
+  temperatureC          Float?
+  matchScore            Float                  @default(95.0)
+  explanation           String?
+  stylingTips           String[]               @default([])
+  hairstyleSuggestions  String?
+  isFavorite            Boolean                @default(false)
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+
+  items                 OutfitItem[]
+  accessories           OutfitAccessory[]
+  favorites             OutfitFavorite[]
+  feedback              OutfitFeedback[]
+  recommendationHistory RecommendationHistory[]
+  dailyRecommendations  DailyRecommendation[]
+  plannedOutfits        PlannedOutfit[]
+
+  @@index([ownerId])
+  @@map("outfits")
+}
+
+model OutfitItem {
+  id                    String                 @id @default(uuid())
+  outfitId              String
+  outfit                Outfit                 @relation(fields: [outfitId], references: [id], onDelete: Cascade)
+  garmentId             String
+  garment               Garment                @relation(fields: [garmentId], references: [id], onDelete: Cascade)
+  slotType              SlotType
+
+  @@unique([outfitId, garmentId])
+  @@index([outfitId])
+  @@map("outfit_items")
+}
+
+model OutfitAccessory {
+  id                    String                 @id @default(uuid())
+  outfitId              String
+  outfit                Outfit                 @relation(fields: [outfitId], references: [id], onDelete: Cascade)
+  accessoryId           String
+  accessory             Accessory              @relation(fields: [accessoryId], references: [id], onDelete: Cascade)
+  isSuggested           Boolean                @default(false)
+
+  @@unique([outfitId, accessoryId])
+  @@index([outfitId])
+  @@map("outfit_accessories")
+}
+
+model OutfitFavorite {
+  id                    String                 @id @default(uuid())
+  userId                String
+  user                  User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  outfitId              String
+  outfit                Outfit                 @relation(fields: [outfitId], references: [id], onDelete: Cascade)
+  savedAt               DateTime               @default(now())
+
+  @@unique([userId, outfitId])
+  @@map("outfit_favorites")
+}
+
+model OutfitFeedback {
+  id                    String                 @id @default(uuid())
+  userId                String
+  user                  User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  outfitId              String
+  outfit                Outfit                 @relation(fields: [outfitId], references: [id], onDelete: Cascade)
+  rating                Int                    @default(5)
+  isVibe                Boolean                @default(true)
+  comments              String?
+  submittedAt           DateTime               @default(now())
+
+  @@index([userId])
+  @@map("outfit_feedback")
+}
+
+model RecommendationHistory {
+  id                    String                 @id @default(uuid())
+  userId                String
+  user                  User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  outfitId              String
+  outfit                Outfit                 @relation(fields: [outfitId], references: [id], onDelete: Cascade)
+  recommendedAt         DateTime               @default(now())
+  wasWorn               Boolean                @default(false)
+
+  @@index([userId])
+  @@map("recommendation_history")
+}
+
+model DailyRecommendation {
+  id                    String                 @id @default(uuid())
+  userId                String
+  user                  User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date                  String
+  outfitId              String
+  outfit                Outfit                 @relation(fields: [outfitId], references: [id], onDelete: Cascade)
+  refreshedAt           DateTime               @default(now())
+
+  @@unique([userId, date])
+  @@map("daily_recommendations")
+}
+
+model PlannedEvent {
+  id                    String                 @id @default(uuid())
+  userId                String
+  user                  User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title                 String
+  date                  String
+  startTime             String?
+  endTime               String?
+  occasion              String
+  dressCode             String?
+  notes                 String?
+  location              String?
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+
+  plannedOutfit         PlannedOutfit?
+
+  @@index([userId, date])
+  @@map("planned_events")
+}
+
+model PlannedOutfit {
+  id                    String                 @id @default(uuid())
+  eventId               String                 @unique
+  event                 PlannedEvent           @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  outfitId              String
+  outfit                Outfit                 @relation(fields: [outfitId], references: [id], onDelete: Cascade)
+  hasConflict           Boolean                @default(false)
+  conflictDetails       String?
+  assignedAt            DateTime               @default(now())
+
+  @@map("planned_outfits")
+}
+
+model PasswordResetToken {
+  id                    String                 @id @default(uuid())
+  userId                String
+  user                  User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token                 String                 @unique
+  expiresAt             DateTime
+  createdAt             DateTime               @default(now())
+
+  @@index([token])
+  @@map("password_reset_tokens")
+}
+
+model EmailVerificationToken {
+  id                    String                 @id @default(uuid())
+  userId                String
+  user                  User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token                 String                 @unique
+  expiresAt             DateTime
+  createdAt             DateTime               @default(now())
+
+  @@index([token])
+  @@map("email_verification_tokens")
+}
